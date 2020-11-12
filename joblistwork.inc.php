@@ -1,28 +1,30 @@
 <?php
 
-include_once ('../class/phhdate.inc.php');
+include_once ('./class/dbh.inc.php');
+include_once ('./class/variables.inc.php');
+include_once ('./class/phhdate.inc.php');
 
 Class JOB_WORK_DETAIL {
 
-    Protected $jobcode;//Class scope $jobcode
-    Protected $cuttingtype;//Class scope $cuttingtype
-    Protected $totalquantity;//Class scope $totalquantity
-    Protected $processcode;//Class scope $processcode
-    protected $cncmachining;// boolean value
-    protected $manual;// boolean value
-    protected $bandsaw;// boolean value
-    protected $milling;// boolean value
-    protected $millingwidth;// boolean value
-    protected $millinglength;// boolean value
-    protected $roughgrinding;// boolean value
-    protected $precisiongrinding;// boolean value    
-    Protected $jobtype;// actually this is cuttingtype
+    Protected $jobcode; //Class scope $jobcode
+    Protected $cuttingtype; //Class scope $cuttingtype
+    Protected $totalquantity; //Class scope $totalquantity
+    Protected $processcode; //Class scope $processcode
+    protected $cncmachining; // boolean value
+    protected $manual; // boolean value
+    protected $bandsaw; // boolean value
+    protected $milling; // boolean value
+    protected $millingwidth; // boolean value
+    protected $millinglength; // boolean value
+    protected $roughgrinding; // boolean value
+    protected $precisiongrinding; // boolean value    
+    Protected $jobtype; // actually this is cuttingtype
     Protected $millingarray;
     Protected $grindingtype;
     Protected $arr_jobWork;
     Protected $ex_jobWork;
-    Protected $jobOutputList;//Class scope $jobOutputList
-    public $jlwid;
+    Protected $jobOutputList; //Class scope $jobOutputList
+    public $jlwsid;
 
     #private $rundb;
 
@@ -30,16 +32,16 @@ Class JOB_WORK_DETAIL {
         #$this->rundb = $rundb;
         ##################Initialization of key scope variables that act as starting varaibles (input) #########
         // Input parameter $jobcode, $cuttingtype, $processcode, $totalquantity, $jobOutputList set to scope variables
-        $this->jobcode = $jobcode;//Class scope $jobcode Line 7 
+        $this->jobcode = $jobcode; //Class scope $jobcode Line 7 
         //$this->set_jobcode($jobcode);// setter do not put in constructor
-        $this->cuttingtype = $cuttingtype;//Class scope $cuttingtype Line 8 
+        $this->cuttingtype = $cuttingtype; //Class scope $cuttingtype Line 8 
         //$this$this->cuttingtype = $cuttingtype
-        $this->totalquantity = $totalquantity;//Class scope $totalquantity Line 9 
+        $this->totalquantity = $totalquantity; //Class scope $totalquantity Line 9 
         //$this->set_cuttingtype($cuttingtype);// setter do not put in constructor
-        $this->processcode = $processcode;//Class scope $processcode Line 10 
+        $this->processcode = $processcode; //Class scope $processcode Line 10 
         //$this->set_processcode($processcode);// setter do not put in constructor
         #echo "processcode = $processcode";
-        $this->jobOutputList = $jobOutputList;//Class scope $totalquantity Line 16
+        $this->jobOutputList = $jobOutputList; //Class scope $totalquantity Line 16
         //$this->set_jobOutputList($jobOutputList);setter do not put in constructor
         ####################### End of  Initialization #########################################################
         //check if there's existing jobwork_detail on database for this jobcode
@@ -89,7 +91,7 @@ Class JOB_WORK_DETAIL {
                 switch ($key) {
                     case 'cncmachining':
                         $jobtype[] = $key;
-                        
+
                         break;
                     case 'manual':
                         $jobtype[] = $key;
@@ -159,9 +161,9 @@ Class JOB_WORK_DETAIL {
         #echo "$result <br>";
         return $result;
     }
-    
+
     Protected function check_existing_jobworkstatus($jobcode) {
-       
+
         $qr = "SELECT * FROM joblist_work_status WHERE jobcode = '$jobcode'";
         $objSQL = new SQL($qr);
         $result = $objSQL->getResultOneRowArray();
@@ -169,7 +171,8 @@ Class JOB_WORK_DETAIL {
         #echo "result = <br>";
         #var_dump($result);
         if (!empty($result)) {
-            $this->jlwid = $result['jlwid']; //instantiate  Scope public variables $jlwid;
+            $this->set_jlwsid($result['jlwsid']);
+            #$this->jlwsid = $result['jlwsid']; //instantiate  Scope public variables $jlwid;
             return $result;
         } else {
             return 'empty';
@@ -539,91 +542,135 @@ Class JOB_WORK_DETAIL {
         $this->jobOutputList = $input;
     }
 
+    Public function get_jlwsid() {
+        return $this->jlwsid;
+    }
+
+    Protected function set_jlwsid($input) {
+        $this->jlwsid = $input;
+    }
+
 }
 
-Class JOB_WORK_2  {
+Class JOB_WORK_2 {
 
     protected $jcodeid;
     protected $jobcode;
     protected $sid;
     protected $period;
-    Public jlwsid; 
+    Public $jlwsid;
 
     //later put properties here
     Public function __construct($jobcode) {
-
-        parent::__construct($jobcodet);
         $objPeriod = new Period();
         $period = $objPeriod->getcurrentPeriod();
-        $this->period = $period;//initialize scope variable $period at line 549
-
+        $this->period = $period; //initialize scope variable $period at line 549
+        $this->jobcode = $jobcode; // initialize scope variable $jobcode 
         #####################################################
         // use sql query from table jobcodesid check if any records are match the input parameters $jobcode
         // from this match get the $sid, $period, $jcodeid, and $jlwsid, then initialize scope variable
-
         // if not found any records match check table 
         // see any match of $jobcode->[$runningno, $period, $jobno] in this table produciton_scheduling_period
         // if found, initialize $sid, $period, and insert $sid, $period, $jcodeid, and $jlwsid into table jobcodesi
         # as new found record
-
         // if not found any $jobcode->[$runningno, $period, $jobno] match  in table produciton_scheduling_period
         // then this is a wrong information in input, because production_scheduling_period no record, then orderlist also no report
-
         #####################################################
-
-        $ex_jobwork = parent::check_existing_jobworkstatus($jobcode);
-        if ($ex_jobwork == 'empty') {
-            //begin creating new joblist_work_status data
-            //fetch current period
-            $objPeriod = new Period();
-            $period = $objPeriod->getcurrentPeriod();
-            //parse the jobcode
-            $jlfor = substr($jobcode, 0, 2);
-            $co_code = substr($jobcode, 3, 3);
-            $runningno = (int) substr($jobcode, 12, 4);
-            $jobno = (int) substr($jobcode, 17, 2);
-
-            //Call data from production_scheduling_period
-            $qr = "SELECT * FROM production_scheduling_$period "
-                    . "WHERE jlfor = '$jlfor'"
-                    . "AND quono LIKE '$co_code%' "
-                    . "AND runningno = '$runningno' "
-                    . "AND jobno = '$jobno'";
-            $objSQL = new SQL($qr);
-            $result = $objSQL->getResultOneRowArray();
-            if (!empty($result)) {
-                //if found data in production_scheduling
-                //Call needed data
-                $cuttingtype = $result['cuttingtype'];
-                $processcode = $result['process'];
-                $totalquantity = $result['quantity'];
-                //begin initialize parent.
-                parent::__construct($jobcode, $cuttingtype, $processcode, $totalquantity);
-                $ex_jobwork = $this->get_ex_jobwork(); //replace $ex_jobwork with new data
-                //fetch the jwid of existing jobwork
-                $jlwid = $ex_jobwork['jlwid'];
+        //Check if jobcode exists in jobcodesid table
+        $check_jobcodesid = $this->check_existing_jobcodesid();
+        if ($check_jobcodesid == 'empty') {
+            //There's no data yet in jobcodesid, creating a new data
+            //Begin fetching data using JOB_WORK_DETAIL 
+            $checkResult = $this->check_existing_joblist_work_status();
+            if ($checkResult == 'empty') {
+                //There's something wrong in joblistworkstatus generation
+                echo "There's no data, cannot continue process";
             } else {
-                //if not found data in production_scheduling
-                //Means data not exist, return error here
+                //done creating jlworkstatus data,
+                //begin create jobcodesid data
+                $this->create_jobcodesid();
             }
-            //end call data from production_scheduling_period
-        } else {
-            //if data exists, get the JWID, to be put into jobcodesid table
-            $jlwid = $ex_jobwork['jlwid'];
-        }
-        $ex_jobcodesid = $this->check_existing_jobcodesid($jobcode);
-        //begin check of jobcodesid table
-        if ($ex_jobcodesid == 'empty') {
-            //if thjere's no data here
+        }else{
+            $this->sid = $check_jobcodesid['sid'];
+            $this->period = $check_jobcodesid['period'];
+            $this->jlwsid = $check_jobcodesid['jlwsid'];
         }
     }
-
-    Protected function check_existing_jobcodesid($jobcode) {
+    Public function call_test_output(){
+        echo "Sid = ".$this->sid."<br>";
+        echo "Period = ".$this->period."<br>";
+        echo "JLWSID = ".$this->jlwsid."<br>";
+    }
+    Protected function check_existing_jobcodesid() {
+        $jobcode = $this->jobcode;
         $qr = "SELECT * FROM jobcodesid WHERE jobcode = '$jobcode'";
         $objSQL = new SQL($qr);
         $result = $objSQL->getResultOneRowArray();
         if (!empty($result)) {
             return $result;
+        } else {
+            return 'empty';
+        }
+    }
+    Protected function create_jobcodesid() {
+        $period = $this->period;
+        $jobcode = $this->jobcode;
+        $sid = $this->sid;
+        $jlwsid = $this->jlwsid;
+        $ins_array = array('jobcode' => $jobcode, 'sid' => $sid, 'period' => $period, 'jlwsid' => $jlwsid);
+        $cntarr = count($ins_array);
+        $cnt = 0;
+        $qr = "INSERT INTO jobcodesid SET ";
+        foreach ($ins_array as $key => $val) {
+            $cnt++;
+            $qr .= "$key = :$key ";
+            if ($cnt != $cntarr) {
+                $qr .= " , ";
+            }
+        }
+        $objSQL = new SQLBINDPARAM($qr, $ins_array);
+        $ins_result = $objSQL->InsertData2();
+        if ($ins_result == 'insert ok!') {
+            echo "Successfully inserted data into jobcodesid";
+        } else {
+            echo "Failed to insert";
+        }
+    }
+
+    Protected function check_existing_joblist_work_status() {
+        $jobcode = $this->jobcode;
+        $period = $this->period;
+        $table = "production_scheduling_$period";
+        //begin parse jobcode
+        $jlfor = substr($jobcode, 0, 2);
+        $company_code = substr($jobcode, 3, 3);
+        $issue_period = substr($jobcode, 7, 4);
+        $runningno = (int) substr($jobcode, 12, 4);
+        $jobno = (int) substr($jobcode, 17, 2);
+        #echo "parseJobCode length = " . strlen($parseJobCode) . "\n";
+        //begin fetch data from scheduling
+        $qr = "SELECT * FROM $table "
+                . "WHERE jlfor = '$jlfor' "
+                . "AND quono LIKE '$company_code%' "
+                . "AND runningno LIKE '$runningno' "
+                . "AND jobno LIKE '$jobno' ";
+        $objSQL = new SQL($qr);
+        $result = $objSQL->getResultOneRowArray();
+        if (!empty($result)) {
+            $cuttingtype = $result['cuttingtype'];
+            $processcode = $result['process'];
+            $totalquantity = $result['quantity'];
+            //create a new object of Job Work Detail
+            $objJW = new JOB_WORK_DETAIL($jobcode, $cuttingtype, $processcode, $totalquantity);
+            //Fetch existing Jobwork array
+            $ex_jobwork_status = $objJW->get_ex_jobwork();
+            if ($ex_jobwork_status != 'empty') {
+                $this->jlwsid = $objJW->get_jlwsid();
+            } else {
+                return 'empty';
+            }
+            $this->sid = $result['sid'];
+            //all data has been carried to scope variables
         } else {
             return 'empty';
         }
