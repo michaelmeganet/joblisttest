@@ -541,7 +541,7 @@ Class JOB_WORK_DETAIL {
 
 }
 
-Class JOB_WORK_2 extends JOB_WORK_DETAIL {
+Class JOB_WORK_2  {
 
     protected $jcodeid;
     protected $jobcode;
@@ -550,9 +550,9 @@ Class JOB_WORK_2 extends JOB_WORK_DETAIL {
     Public jlwsid; 
 
     //later put properties here
-    Public function __construct($jobcode,$cuttingtype, $processcode, $totalquantity, $jobOutputList) {
+    Public function __construct($jobcode) {
 
-        parent::__construct($jobcode, $cuttingtype, $processcode, $totalquantity, $jobOutputList);
+        parent::__construct($jobcodet);
         $objPeriod = new Period();
         $period = $objPeriod->getcurrentPeriod();
         $this->period = $period;//initialize scope variable $period at line 549
