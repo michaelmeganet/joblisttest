@@ -2,8 +2,7 @@
 
 include_once ('../class/phhdate.inc.php');
 
-
-class  JOB_WORK_DETAIL {
+class JOB_WORK_DETAIL {
 
     protected $jlwsid;
     protected $jobcode;
@@ -19,17 +18,13 @@ class  JOB_WORK_DETAIL {
     protected $millinglength;
     protected $roughgrinding;
     protected $precisiongrinding;
-    protected $insertArray ;
+    protected $insertArray;
 
+    public function __construct($jobcode, $cuttingtype, $processcode, $totalquantity, $jobOutputList = null) {
 
-    public function __construct(  $jobcode, $cuttingtype, $processcode, $totalquantity, $jobOutputList = null){
-        
 
         $jobOutputList = array();
         $this->insertArray = $jobOutputList;
-
     }
-
-
 
 }
