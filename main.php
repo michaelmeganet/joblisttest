@@ -57,6 +57,29 @@ if (isset($_POST['jobcode'])) {
 //    print_r($getResultforJoblist);
 //    echo "<br>";
 }
+$text = 'This is a Simple text.';
 
+// this echoes "is is a Simple text." because 'i' is matched first
+//echo strpbrk($text, 'mi');
+//echo "<br>";
+// this echoes "Simple text." because chars are case sensitive
+//echo strpbrk($text, 'S');
 // [sid] => 5029, [bid] => 1, [quono] => DCM 2011 004 (R1), [jobno] => 2, [jlfor] => CJ
+//$str = "4WA2SGA";
+//$pattern = "/4WASGA/";
+//$replace = "/\d(SGA)/";
+//echo preg_filter($pattern, $replace, $str);
+//$str = "4WA2SGA";
+//echo "\$str = $str <br>";
+//$pattern = "/4WA2SGA/";
+//echo preg_filter($pattern, "SGA", $str);
+//echo "<br>";
+//$startPosition = strpos("4WA6SGA", "SGA");
+//$noOfSurface = substr($str, ($startPosition - 1), 1);
+//echo "no of Surface in SGA is " . $noOfSurface . "<br>";
+
+$str = "4W2RG";
+$pattern = "/4W2RG/";
+echo stristr($str, "SGA");
+//echo preg_filter($pattern, "SGA", $str);
 ?>

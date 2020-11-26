@@ -7,6 +7,136 @@ include_once ('class/variables.inc.php');
 include_once ('class/phhdate.inc.php');
 include_once ('class/pmach.inc.php');
 
+function checkAnyMillProcess($ProcessName) {
+
+    $check = substr($ProcessName, 1, 1);
+
+    return $check;
+}
+
+function checkAnyRGProcess($ProcessName) {
+
+    echo "in the fucntion checkAnyRGProcess , \$ProcessName = $ProcessName<br>";
+
+    #refer https://www.evernote.com/l/AJMyzaanFTlKK6krVVJPGpjqDuDWXbHOWzk/
+    # https://www.runoob.com/php/php-preg_filter.html
+    //$str = "4WA2RGA";
+    //$pattern = "/4WA2RGA/";
+    //echo preg_filter($pattern, "RGA", $str);
+    //result = SGA
+    //
+    ## check it is RG or RGA
+    $TEST = stristr("$ProcessName", "RGA");
+    if (!isset($TEST) || empty($TEST) || $TEST != "RGA") {
+
+        $TEST = stristr("$ProcessName", "RG");
+        echo "the process is RG ,because \$TEST = $TEST<br>";
+    } else {
+        echo "the process is RGA ,because \$TEST = $TEST<br>";
+    }
+
+
+    if (!empty($TEST) || !isset($TEST)) {
+
+
+        $pattern = "/" . $ProcessName . "/";
+        switch ($TEST) {
+            case "RGA":
+
+                $check = preg_filter($pattern, "RGA", $ProcessName);
+                break;
+            case "RG":
+
+                $check = preg_filter($pattern, "RG", $ProcessName);
+                break;
+
+            default:
+
+                break;
+        }
+
+        echo "LINE 61 -> \$check =  $check <br>";
+
+
+        return $check;
+    }
+}
+
+function checkAnySGProcess($ProcessName) {
+    echo "in the fucntion checkAnySGProcess , \$ProcessName = $ProcessName<br>";
+    //$check = strpbrk($ProcessName, "SG");
+    #refer https://www.evernote.com/l/AJMyzaanFTlKK6krVVJPGpjqDuDWXbHOWzk/
+    # https://www.runoob.com/php/php-preg_filter.html
+    //$str = "4WA2SGA";
+    //$pattern = "/4WA2SGA/";
+    //echo preg_filter($pattern, "SGA", $str);
+    //result = SGA
+    $TEST = stristr("$ProcessName", "SGA");
+    if (!isset($TEST) || empty($TEST) || $TEST != "SGA") {
+
+        $TEST = stristr("$ProcessName", "SG");
+        echo "the process is SG ,because \$TEST = $TEST<br>";
+    } else {
+        echo "the process is SGA ,because \$TEST = $TEST<br>";
+    }
+
+    if (!empty($TEST) || !isset($TEST)) {
+
+        $pattern = "/" . $ProcessName . "/";
+        switch ($TEST) {
+            case "SGA":
+
+                $check = preg_filter($pattern, "SGA", $ProcessName);
+                break;
+            case "SG":
+
+                $check = preg_filter($pattern, "SG", $ProcessName);
+                break;
+
+            default:
+
+                break;
+        }
+
+        echo "LINE 117 -> \$check =  $check <br>";
+
+
+        return $check;
+    }
+}
+
+function checkFacesSG($ProcessName) {
+    echo "in function of checkFacsesSG <br>";
+    $startPosition = strpos("$ProcessName", "SG");
+    $noOfSurface = substr($ProcessName, ($startPosition - 1), 1);
+    echo "\$noOfSurface = $noOfSurface <br>";
+    return $noOfSurface;
+}
+
+function checkFacesSGA($ProcessName) {
+    echo "in function of checkFacsesSGA <br>";
+    $startPosition = strpos("$ProcessName", "SGA");
+    $noOfSurface = substr($ProcessName, ($startPosition - 1), 1);
+    echo "\$noOfSurface = $noOfSurface <br>";
+    return $noOfSurface;
+}
+
+function checkFacesRG($ProcessName) {
+    echo "in function of checkFacsesRG <br>";
+    $startPosition = strpos("$ProcessName", "RG");
+    $noOfSurface = substr($ProcessName, ($startPosition - 1), 1);
+    echo "\$noOfSurface = $noOfSurface <br>";
+    return $noOfSurface;
+}
+
+function checkFacesRGA($ProcessName) {
+    echo "in function of checkFacsesRGA <br>";
+    $startPosition = strpos("$ProcessName", "RGA");
+    $noOfSurface = substr($ProcessName, ($startPosition - 1), 1);
+    echo "\$noOfSurface = $noOfSurface <br>";
+    return $noOfSurface;
+}
+
 function numberToWords($int) {
     echo "in function numberToWords , \$int = $int<br>";
     switch ($int) {
@@ -189,13 +319,7 @@ Class PROCESS {
         } elseif ($status != "active") {
             echo "The status for  $jobcode is $status, which is not the active status, this jobcode have issue.<br>";
         } else {
-//            echo "The \$sch_detial grab from $jobcode is as follow <br>";
-//            var_dump($sch_detail);
-//            foreach ($sch_detail as $key => $value) {
-//                ${$key} = $value;
-//                echo "$key : $value\n" . "<br>";
-//                debug_to_console("$key => $value");
-//            }
+
             $this->sid = $sch_detail['sid'];
             $this->bid = $sch_detail['bid'];
             $this->qid = $sch_detail['qid'];
@@ -253,19 +377,55 @@ Class PROCESS {
             $objcutCode = new CUTPROCESS($this->cuttingType); //aggregation relationship
             $cutCode = $objcutCode->$cutCode;
 
-            echo "$cutCode = $cutCode <br>";
+            echo "\$cutCode = $cutCode <br>";
+            ####
+            ## check if there is a milling process
+            $checkMill = checkAnyMillProcess($this->ProcessName); //Assume it is W
+            if ($checkMill == "W") {// Milling
+                $objMill = new MILL($this->ProcessName);
+            } else {
 
-            $objMill = new MILL($this->ProcessName);
+            }
+
+            #####
+            ## check if there is a Surface Grinding Process
+
+            $checkSG = checkAnySGProcess($this->ProcessName);
+            echo "Line 359 , \$checkSG = $checkSG <br>";
+            if (!empty($checkSG)) {
+                if ($checkSG == 'SG') {// SG process
+                    echo "\$checkSG = $checkSG <br>";
+                    //  $objSG = new SG($this->ProcessName);
+                } elseif ($checkSG == 'SGA') {
+                    echo "\$checkSG = $checkSG <br>";
+                }
+
+                $objSG = new SURFACE_GRIND($this->ProcessName);
+            }
+
+            #####
+            ## check if there is a RG Surface Grinding Process
+            $checkRG = checkAnyRGProcess($this->ProcessName);
+            if (!empty($checkRG)) {
+                if ($checkRG == 'RG') {// SG process
+                    echo "\$checkRG = $checkRG <br>";
+                } elseif ($checkRG == 'RGA') {
+                    echo "\$checkRG = $checkRG <br>";
+                }
+
+                $objRG = new RG($this->ProcessName);
+            }
         }
-//            $sch_detail = get_scheduling_detail_by_jobcode($prevPeriod, $jobcode);
-//            if ($schDetail == 'empty') {
-//                Throw new Exception("Cannot find Scheduling data of jobcode = $jobcode in period = $thisPeriod and period = $prevPeriod");
-//            } else {
-//                $period = $prevPeriod;
-//            }
-//        } else {
-//            $period = $thisPeriod;
-//        }
+
+        echo "<br>#############ECHO OUT THE SURFACE PROCESS CODE######################<br>";
+        $cutCode = $objcutCode->cutCode;
+        echo "cutCode = $cutCode <br>";
+        $millFaceCode = $objMill->millFaceCode;
+        echo "millFaceCode = $millFaceCode <br>";
+        $SGFaceCode = $objSG->SGFaceCode;
+        echo "SGFaceCode = $SGFaceCode <br>";
+        $RGFaceCode = $objRG->RGFaceCode;
+        echo "RGFaceCode = $RGFaceCode <br>";
     }
 
 }
@@ -273,7 +433,7 @@ Class PROCESS {
 Class CUTPROCESS {
 
     protected $cuttingType;
-    protected $cutCode;
+    public $cutCode;
 
     public function __construct($cuttingType) {
 //        parent::__construct($jobcode);
@@ -310,6 +470,7 @@ Class CUTPROCESS {
 Class MILL extends PROCESS {
 
     protected $ProcessName;
+    public $millFaceCode;
 
     public function __construct($processName) {
 
@@ -327,7 +488,7 @@ Class MILL extends PROCESS {
         echo "millFaces = $millFaces <br>";
         $numberOfFace = numberToWords($millFaces);
 
-        echo "<br>\$numberOfFace = $numberOfFace <br> ";
+        //echo "<br>\$numberOfFace = $numberOfFace <br> ";
         #########
         # detect standard milling (W) or accuratge Mill (WA)
         $millAccurate = $millFaces = substr($processName, 1, 2); //Assume it is WA
@@ -347,13 +508,136 @@ Class MILL extends PROCESS {
         echo "\$SurfaceProcess = $SurfaceProcess <br>";
 
         ######
-        # setup SURFACE_PROCESSES Class
+        # setup Mill SURFACE_PROCESSES Class
         $objName = new SURFACE_PROCESSES($SurfaceProcess);
         $millFaceCode = $objName->getFaceCode();
 #        $millFaceCode = SURFACE_PROCESSES::FOUR_WA
-
+        $this->millFaceCode = $millFaceCode;
         echo "\$millFaceCode = $millFaceCode <br>";
+        echo "<br>##################END OF INSTANTIATION IN MILL CLASS##########################<br>";
     }
 
 }
+
+Class SURFACE_GRIND extends PROCESS {
+
+    protected $ProcessName;
+    protected $SGprocess;
+    protected $SurfaceFormCode;
+    public $SGFaceCode;
+
+    public function __construct($processName) {
+        $this->ProcessName = $processName;
+
+
+        ## check and confirm SG process name
+        echo "<br>#####################################################<br>";
+        echo "in Class SURFACE_GRIND's constructor, instantiated ProcessName = $processName <br>";
+        ####
+        # Detect surface griding surfaces
+        # 2 : top and bottom
+        # 4 : front and rear + left and right
+        # 6 : top and bottom + front and rear + left and right
+        $SGprocess = checkAnySGProcess($processName);
+        $this->SGprocess = $SGprocess;
+        echo "\$SGprocess = $SGprocess <br>";
+        ## check it is single surface of double surface for each SG process
+        $SGFaces = checkFacesSG($processName);
+        //echo "\$SGFaces = $SGFaces <br>";
+        $numberOfFaces = numberToWords($SGFaces);
+        //echo "\$numberOfFaces = $numberOfFaces <br>";
+        ####
+        # TRANSLATE TO capital letter numeric system
+        $SurfaceProcess = $numberOfFaces . "_" . $SGprocess;
+        echo "\$SurfaceProcess = $SurfaceProcess <br>";
+        ######
+        # setup SG SURFACE_PROCESSES Class
+        $objName = new SURFACE_PROCESSES($SurfaceProcess);
+
+        switch ($SGprocess) {
+            case "SGA":
+                $SGFaceCode = $objName->getSGAFaceCode();
+
+                break;
+            case "SG":
+                $SGFaceCode = $objName->getSGFaceCode();
+
+                break;
+            default:
+                $SGFaceCode = "Get nothing because \$SGprocess = $SGprocess, which  "
+                        . " is not belong to SG or SGA <br>";
+                break;
+        }
+        $this->SGFaceCode = $SGFaceCode;
+
+        echo "\$SGFaceCode = $SGFaceCode <br>";
+        echo "<br>##################END OF INSTANTIATION IN SURFACE_GRIND CLASS##########################<br>";
+    }
+
+}
+
+Class RG extends PROCESS {
+
+    protected $ProcessName;
+    protected $RGprocess;
+    protected $SurfaceFormCode;
+    public $RGFaceCode;
+
+    public function __construct($processName) {
+
+        $this->ProcessName = $processName;
+        ## check and confirm SG process name
+        echo "<br>#####################################################<br>";
+        echo "in Class RG_SURFACE_GRIND's constructor, instantiated ProcessName = $processName <br>";
+        ####
+        # Detect RG surface griding surfaces
+        # 2 : top and bottom
+        # 4 : front and rear + left and right
+        # 6 : top and bottom + front and rear + left and right
+        $RGprocess = checkAnyRGProcess($processName);
+        $this->RGprocess = $RGprocess;
+        echo "\$RGprocess = $RGprocess <br>";
+        ## check it is single surface of double surface for each SG process
+        $RGFaces = checkFacesRG($processName);
+        echo "\$RGFaces = $RGFaces <br>";
+        $numberOfFaces = numberToWords($RGFaces);
+        echo "\$numberOfFaces = $numberOfFaces <br>";
+        ####
+        # TRANSLATE TO capital letter numeric system
+        $SurfaceProcess = $numberOfFaces . "_" . $RGprocess;
+        echo "\$SurfaceProcess = $SurfaceProcess <br>";
+        ######
+        ######
+        # setup RG SURFACE_PROCESSES Class
+//        $objName = new SURFACE_PROCESSES($SurfaceProcess);
+//        $RGFaceCode = $objName->getRGFaceCode();
+//        $this->RGFaceCode = $RGFaceCode;
+//
+//        echo "\$SGFaceCode = $SGFaceCode <br>";
+//        echo "<br>##################END OF INSTANTIATION IN SURFACE_GRIND CLASS##########################<br>";
+        # setup RG SURFACE_PROCESSES Class
+        $objName = new SURFACE_PROCESSES($SurfaceProcess);
+
+        switch ($RGprocess) {
+            case "RGA":
+                $RGFaceCode = $objName->getRGAFaceCode();
+
+                break;
+            case "RG":
+                $RGFaceCode = $objName->getRGFaceCode();
+
+                break;
+            default:
+                $SGFaceCode = "Get nothing because \$RGprocess = $RGprocess, which  "
+                        . " is not belong to RG or RGA <br>";
+                break;
+        }
+        $this->RGFaceCode = $RGFaceCode;
+
+        echo "\$RGFaceCode = $RGFaceCode <br>";
+        echo "<br>##################END OF INSTANTIATION IN RG CLASS##########################<br>";
+    }
+
+}
+
 ?>
