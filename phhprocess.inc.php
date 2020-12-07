@@ -71,13 +71,17 @@ function checkAnySGProcess($ProcessName) {
     //$pattern = "/4WA2SGA/";
     //echo preg_filter($pattern, "SGA", $str);
     //result = SGA
+    echo "\$ProcessName = $ProcessName<br>";
     $TEST = stristr("$ProcessName", "SGA");
-    if (!isset($TEST) || empty($TEST) || $TEST != "SGA") {
+    echo "\$TEST = $TEST <br>";
+    var_dump($TEST);
+    echo "<br>";
+    $TEST = stristr("$ProcessName", "SG");
+    if (!$TEST || !isset($TEST) || empty($TEST) || $TEST != "SGA") {
 
-        $TEST = stristr("$ProcessName", "SG");
         echo "the process is SG ,because \$TEST = $TEST<br>";
     } else {
-        echo "the process is SGA ,because \$TEST = $TEST<br>";
+        echo "the process is not SG ,because \$TEST = $TEST<br>";
     }
 
     if (!empty($TEST) || !isset($TEST)) {
@@ -430,8 +434,10 @@ Class PROCESS {
                 } elseif ($checkSG == 'SGA') {
                     echo "\$checkSG = $checkSG <br>";
                 }
-
+                echo "var_dump<br>";
                 $objSG = new SURFACE_GRIND($this->ProcessName);
+                var_dump($objSG);
+                echo "<br>";
             }
 
             #####
@@ -487,9 +493,11 @@ Class PROCESS {
 //            echo "SurfaceProcessSymbol = $SurfaceProcessSymbol <br>";
 //            $this->SurfaceProcessSymbol = $SurfaceProcessSymbol;
 //        }
-        $SGFaces = $objSG->SGFaces;
-        $SGFaceCode = $objSG->SGFaceCode;
+        if (isset($objSG)) {
+            $SGFaces = $objSG->SGFaces;
+            $SGFaceCode = $objSG->SGFaceCode;
 //        echo "SGFaceCode = $SGFaceCode <br>";
+        }
 
         $SG_SurfaceProcessSymbol = $objSG->SG_SurfaceProcessSymbol;
         $this->SG_SurfaceProcessSymbol = $SG_SurfaceProcessSymbol;
