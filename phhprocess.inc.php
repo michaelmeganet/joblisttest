@@ -282,13 +282,21 @@ function findProcessName($process) {
 Class PROCESS {
 
     public $joblistno;
-    protected $cutCode;
+    public $cutCode;
     protected $processType;
-    protected $cuttingType;
+    public $cuttingType;
+    public $millFaces;
+    public $RGFaces;
+    public $SGFaces;
+    //public $ProcessSurface;
+    protected $cutType;
     protected $ProcessName;
-    protected $ProcessSurface;
     protected $SurfaceFinish;
     protected $processCode;
+    public $millFaceCode;
+    public $SGFaceCode;
+    public $RGFaceCode;
+    public $ProcessSurface;
     protected $sid;
     protected $bid;
     protected $qid;
@@ -302,10 +310,31 @@ Class PROCESS {
     protected $jobno;
     protected $jlfor;
     protected $status;
+    protected $SurfaceProcess;
+    protected $SurfaceProcessSymbol;
+    public $Mill_SurfaceProcessCode;
+    public $Mill_SurfaceProcessSymbol;
+    public $SG_SurfaceProcessSymbol;
+    public $SG_SurfaceProcessCode;
+    public $RG_SurfaceProcessSymbol;
+    public $RG_SurfaceProcessCode;
+    public $ThickSizeMill;
+    public $WidthSizeMill;
+    public $LengthSizeMill;
+    public $ThickSizeSurfGrind; //LSG or LSGA
+    public $WidthSizeSurfGrind; //WSG or WSGA
+    public $LengthSizeSurfGrind; //LSG or LSGA
+
+//        $millFaceCode = $objMill->millFaceCode;
+//        echo "millFaceCode = $millFaceCode <br>";
+//        $SGFaceCode = $objSG->SGFaceCode;
+//        echo "SGFaceCode = $SGFaceCode <br>";
+//        $RGFaceCode = $objRG->RGFaceCode;
+//        echo "RGFaceCode = $RGFaceCode <br>";
 
     public function __construct($jobcode) {
 
-
+//        $cutCode = "";
         //Assume all jobcode is current month and last month jobcode
         $objPeriod = new Period();
         $thisPeriod = $objPeriod->getcurrentPeriod();
@@ -377,7 +406,9 @@ Class PROCESS {
             $objcutCode = new CUTPROCESS($this->cuttingType); //aggregation relationship
             $cutCode = $objcutCode->$cutCode;
 
-            echo "\$cutCode = $cutCode <br>";
+//            $this->cuttingType = $objcutCode ;
+            $this->cutCode = $cutCode;
+
             ####
             ## check if there is a milling process
             $checkMill = checkAnyMillProcess($this->ProcessName); //Assume it is W
@@ -418,14 +449,105 @@ Class PROCESS {
         }
 
         echo "<br>#############ECHO OUT THE SURFACE PROCESS CODE######################<br>";
+
         $cutCode = $objcutCode->cutCode;
-        echo "cutCode = $cutCode <br>";
+        if (!empty($cutCode)) {
+            echo "cutCode = $cutCode <br>";
+            $this->cutCode = $cutCode;
+        }
+        $millFaces = $objMill->millFaces; // integer
+        $this->millFaces = $millFaces;
+
+        if (!empty($millFaces)) {
+            echo "millFaces = $millFaces<br>";
+        }
+
         $millFaceCode = $objMill->millFaceCode;
-        echo "millFaceCode = $millFaceCode <br>";
+
+        if (!empty($millFaceCode)) {
+
+            echo "millFaceCode = $millFaceCode <br>";
+            $this->millFaceCode = $millFaceCode;
+        }
+        $Mill_SurfaceProcessSymbol = $objMill->Mill_SurfaceProcessSymbol;
+        if (!empty($Mill_SurfaceProcessSymbol)) {
+            $Mill_SurfaceProcessSymbol = $objMill->Mill_SurfaceProcessSymbol;
+            echo "Mill_SurfaceProcessSymbol = $Mill_SurfaceProcessSymbol <br>";
+        }
+        $Mill_SurfaceProcessCode = $objMill->Mill_SurfaceProcessCode;
+        $this->Mill_SurfaceProcessCode = $Mill_SurfaceProcessCode;
+        $this->Mill_SurfaceProcessSymbol = $Mill_SurfaceProcessSymbol;
+
+        echo "Mill_SurfaceProcessCode  = $Mill_SurfaceProcessCode  <br>";
+        $this->ThickSizeMill = $objMill->ThickSizeMill;
+        $this->WidthSizeMill = $objMill->WidthSizeMill;
+        $this->LengthSizeMill = $objMill->LengthSizeMill;
+        //$this->SurfaceProcessSymbol = $SurfaceProcessSymbol;
+//        if (!empty($SurfaceProcessSymbol)) {
+//            echo "SurfaceProcessSymbol = $SurfaceProcessSymbol <br>";
+//            $this->SurfaceProcessSymbol = $SurfaceProcessSymbol;
+//        }
+        $SGFaces = $objSG->SGFaces;
         $SGFaceCode = $objSG->SGFaceCode;
-        echo "SGFaceCode = $SGFaceCode <br>";
+//        echo "SGFaceCode = $SGFaceCode <br>";
+
+        $SG_SurfaceProcessSymbol = $objSG->SG_SurfaceProcessSymbol;
+        $this->SG_SurfaceProcessSymbol = $SG_SurfaceProcessSymbol;
+        $SG_SurfaceProcessCode = $objSG->SG_SurfaceProcessCode;
+        $this->SG_SurfaceProcessCode = $SG_SurfaceProcessCode;
+        if (!empty($SG_SurfaceProcessSymbol)) {
+            echo "SG_SurfaceProcessSymbol = $SG_SurfaceProcessSymbol<br>";
+        }
+        if (!empty($SG_SurfaceProcessCode)) {
+            echo "SG_SurfaceProcessCode = $SG_SurfaceProcessCode<br>";
+        }
+        if (!empty($SGFaceCode)) {
+            echo "SGFaceCode = $SGFaceCode <br>";
+            $this->SGFaceCode = $SGFaceCode;
+        }
+        if (!empty($objSG)) {
+            $this->ThickSizeSurfGrind = $objSG->ThickSizeSurfGrind;
+            $this->WidthSizeSurfGrind = $objSG->WidthSizeSurfGrind;
+            $this->LengthSizeSurfGrind = $objSG->LengthSizeSurfGrind;
+            echo "in SG, \$this->ThickSizeSurfGrind = $this->ThickSizeSurfGrind<br>";
+            echo "in SG, \$this->WidthSizeSurfGrind = $this->WidthSizeSurfGrind<br>";
+            echo "in SG, \$this->LengthSizeSurfGrind = $this->LengthSizeSurfGrind<br>";
+        }
+        $RGFaces = $objRG->RGFaces;
+        if (!empty($RGFaces)) {
+            echo "RGFaces = $RGFaces<br>";
+        }
+        $this->RGFaces = $RGFaces;
         $RGFaceCode = $objRG->RGFaceCode;
-        echo "RGFaceCode = $RGFaceCode <br>";
+        if (!empty($RGFaceCode)) {
+            $RGFaceCode = $objRG->RGFaceCode;
+            $this->RGFaceCode = $RGFaceCode;
+            echo "RGFaceCode = $RGFaceCode <br>";
+        }
+        $RG_SurfaceProcessSymbol = $objRG->RG_SurfaceProcessSymbol;
+        $this->RG_SurfaceProcessSymbol = $RG_SurfaceProcessSymbol;
+        $RG_SurfaceProcessCode = $objRG->RG_SurfaceProcessCode;
+        $this->RG_SurfaceProcessCode = $RG_SurfaceProcessCode;
+
+        if (!empty($RG_SurfaceProcessCode)) {
+            echo "RG_SurfaceProcessCode = $RG_SurfaceProcessCode<br>";
+        }
+        if (!empty($RG_SurfaceProcessSymbol)) {
+            echo "RG_SurfaceProcessSymbol = $RG_SurfaceProcessSymbol<br>";
+        }
+        if (!empty($objRG)) {
+            $this->ThickSizeSurfGrind = $objRG->ThickSizeSurfGrind;
+            $this->WidthSizeSurfGrind = $objRG-- > WidthSizeSurfGrind;
+            $this->LengthSizeSurfGrind = $objRG-- > LengthSizeSurfGrind;
+            echo "in RG, \$this->ThickSizeSurfGrind = $this->ThickSizeSurfGrind<br>";
+            echo "in RG, \$this->WidthSizeSurfGrind = $this->WidthSizeSurfGrind<br>";
+            echo "in RG, \$this->LengthSizeSurfGrind = $this->LengthSizeSurfGrind<br>";
+        }
+//        $RDFaces = $objRG->ProcessSurface;
+//        $this->ProcessSurface = $ProcessSurface;
+////        if (!empty($ProcessSurface)) {
+//        echo "\$ProcessSurface = $ProcessSurface<br>";
+//        }
     }
 
 }
@@ -437,7 +559,7 @@ Class CUTPROCESS {
 
     public function __construct($cuttingType) {
 //        parent::__construct($jobcode);
-        echo "enter Class CUTPROCESS to instantince . <br>";
+        echo "enter Class CUTPROCESS to instantince cuttingtype . <br>";
         $this->cuttingType = $cuttingType;
 
         switch ($cuttingType) {
@@ -462,7 +584,7 @@ Class CUTPROCESS {
 
                 break;
         }
-        echo "\$this->cutCode = $this->cutCode <br";
+        echo "\$this->cutCode = $this->cutCode <br>";
     }
 
 }
@@ -471,9 +593,33 @@ Class MILL extends PROCESS {
 
     protected $ProcessName;
     public $millFaceCode;
+    public $TWSurfaces;
+    public $TWASurfaces;
+    public $WWSurfaces;
+    public $WWASurfaces;
+    public $LWSurfaces;
+    public $LWASurfaces;
+    public $Mill_SurfaceProcessSymbol;
+    public $Mill_SurfaceProcessCode;
+    public $millFaces;
+    public $ThickSizeMill; //TW or TWA
+    public $WidthSizeMill; //WW or WWA
+    public $LengthSizeMill; //LW or LWA
+
+//    public $ProcessSurface;
 
     public function __construct($processName) {
+        #instanciante
 
+        $this->TWSurfaces = 0;
+        $this->TWASurfaces = 0;
+        $this->WWSurfaces = 0;
+        $this->WWASurfaces = 0;
+        $this->LWSurfaces = 0;
+        $this->LWASurfaces = 0;
+        $this->ThickSizeMill = 0;
+        $this->WidthSizeMill = 0;
+        $this->LengthSizeMill = 0;
         $this->ProcessName = $processName;
 
         echo "<br>#####################################################<br>";
@@ -485,6 +631,9 @@ Class MILL extends PROCESS {
         # 4 : front and rear + left and right
         # 6 : top and bottom + front and rear + left and right
         $millFaces = substr($processName, 0, 1); ## first character of $processName
+        $millFaces = (int) $millFaces;
+        $this->millFaces = $millFaces;
+
         echo "millFaces = $millFaces <br>";
         $numberOfFace = numberToWords($millFaces);
 
@@ -511,9 +660,24 @@ Class MILL extends PROCESS {
         # setup Mill SURFACE_PROCESSES Class
         $objName = new SURFACE_PROCESSES($SurfaceProcess);
         $millFaceCode = $objName->getFaceCode();
+        $faces = $objName->getFaces();
+        $this->ThickSizeMill = $objName->ThickSizeMill;
+        $this->WidthSizeMill = $objName->WidthSizeMill;
+        $this->LengthSizeMill = $objName->LengthSizeMill;
+        $this->ProcessSurface = $faces;
+        $Mill_SurfaceProcessSymbol = $objName->getSurfaceProcessSymbol();
+        $Mill_SurfaceProcessCode = $objName->getSurfaceProcessCode();
 #        $millFaceCode = SURFACE_PROCESSES::FOUR_WA
         $this->millFaceCode = $millFaceCode;
+        $this->Mill_SurfaceProcessSymbol = $Mill_SurfaceProcessSymbol;
+        $this->Mill_SurfaceProcessCode = $Mill_SurfaceProcessCode;
         echo "\$millFaceCode = $millFaceCode <br>";
+        echo "\$Mill_SurfaceProcessSymbol = $Mill_SurfaceProcessSymbol <br>";
+        echo "\$this->ProcessSurface = $this->ProcessSurface <br>";
+        echo "\$this->ThickSizeMill = $this->ThickSizeMill <br>";
+        echo "\$this->WidthSizeMill = $this->WidthSizeMill <br>";
+        echo "\$this->LengthSizeMill= $this->LengthSizeMill <br>";
+
         echo "<br>##################END OF INSTANTIATION IN MILL CLASS##########################<br>";
     }
 
@@ -524,7 +688,10 @@ Class SURFACE_GRIND extends PROCESS {
     protected $ProcessName;
     protected $SGprocess;
     protected $SurfaceFormCode;
+    public $SG_SurfaceProcessSymbol;
+    public $SG_SurfaceProcessCode;
     public $SGFaceCode;
+    public $SGFaces;
 
     public function __construct($processName) {
         $this->ProcessName = $processName;
@@ -552,15 +719,16 @@ Class SURFACE_GRIND extends PROCESS {
         echo "\$SurfaceProcess = $SurfaceProcess <br>";
         ######
         # setup SG SURFACE_PROCESSES Class
-        $objName = new SURFACE_PROCESSES($SurfaceProcess);
+        $objNameSG = new SURFACE_PROCESSES($SurfaceProcess);
+
 
         switch ($SGprocess) {
             case "SGA":
-                $SGFaceCode = $objName->getSGAFaceCode();
+                $SGFaceCode = $objNameSG->getSGAFaceCode();
 
                 break;
             case "SG":
-                $SGFaceCode = $objName->getSGFaceCode();
+                $SGFaceCode = $objNameSG->getSGFaceCode();
 
                 break;
             default:
@@ -571,6 +739,25 @@ Class SURFACE_GRIND extends PROCESS {
         $this->SGFaceCode = $SGFaceCode;
 
         echo "\$SGFaceCode = $SGFaceCode <br>";
+
+//        $millFaceCode = $objName->getFaceCode();
+        $SG_SurfaceProcessSymbol = $objNameSG->getSurfaceProcessSymbol();
+        $SG_SurfaceProcessCode = $objNameSG->getSurfaceProcessCode();
+        $SGFaces = $objNameSG->getFaces();
+        $this->SG_SurfaceProcessSymbol = $SG_SurfaceProcessSymbol;
+        $this->SG_SurfaceProcessCode = $SG_SurfaceProcessCode;
+        $this->SGFaces = $SGFaces;
+        echo "\$SGFaceCode = $SGFaceCode <br>";
+        echo "in SG \$SG_SurfaceProcessSymbol = $SG_SurfaceProcessSymbol <br>";
+        echo "in SG \$SG_SurfaceProcessCode = $SG_SurfaceProcessCode <br>";
+        echo "in SG \$SGFaces = $SGFaces <br>";
+        $this->ThickSizeSurfGrind = $objNameSG->ThickSizeSurfGrind;
+        $this->WidthSizeSurfGrind = $objNameSG->WidthSizeSurfGrind;
+        $this->LengthSizeSurfGrind = $objNameSG->LengthSizeSurfGrind;
+        echo "\$this->ThickSizeSurfGrind = $this->ThickSizeSurfGrind<br>";
+        echo "\$this->WidthSizeSurfGrind = $this->WidthSizeSurfGrind<br>";
+        echo "\$this->LengthSizeSurfGrind = $this->LengthSizeSurfGrind<br>";
+
         echo "<br>##################END OF INSTANTIATION IN SURFACE_GRIND CLASS##########################<br>";
     }
 
@@ -581,7 +768,10 @@ Class RG extends PROCESS {
     protected $ProcessName;
     protected $RGprocess;
     protected $SurfaceFormCode;
+    public $RG_SurfaceProcessSymbol;
+    public $RG_SurfaceProcessCode;
     public $RGFaceCode;
+    public $RGFaces;
 
     public function __construct($processName) {
 
@@ -600,6 +790,7 @@ Class RG extends PROCESS {
         ## check it is single surface of double surface for each SG process
         $RGFaces = checkFacesRG($processName);
         echo "\$RGFaces = $RGFaces <br>";
+        $this->RGFaces = $RGFaces;
         $numberOfFaces = numberToWords($RGFaces);
         echo "\$numberOfFaces = $numberOfFaces <br>";
         ####
@@ -635,8 +826,41 @@ Class RG extends PROCESS {
         $this->RGFaceCode = $RGFaceCode;
 
         echo "\$RGFaceCode = $RGFaceCode <br>";
+        $RG_SurfaceProcessSymbol = $objName->getSurfaceProcessSymbol();
+        $RG_SurfaceProcessCode = $objName->getSurfaceProcessCode();
+        // $RGFaces = $objName->getFaces();
+
+        $this->RG_SurfaceProcessSymbol = $RG_SurfaceProcessSymbol;
+        $this->RG_SurfaceProcessCode = $RG_SurfaceProcessCode;
+        //$this->RGFaces = $RGFaces;
+        echo "in RG \$RG_SurfaceProcessSymbol = $RG_SurfaceProcessSymbol <br>";
+        echo "in RG \$RG_SurfaceProcessCode = $RG_SurfaceProcessCode <br>";
+        echo "in RG \$RGFaces = $RGFaces <br>";
+        echo "in RG \$this->RGFaces = $this->RGFaces <br>";
+        $this->ThickSizeSurfGrind = $objName->ThickSizeSurfGrind;
+        $this->WidthSizeSurfGrind = $objName->WidthSizeSurfGrind;
+        $this->LengthSizeSurfGrind = $objName->LengthSizeSurfGrind;
+        echo "\$this->ThickSizeSurfGrind = $this->ThickSizeSurfGrind<br>";
+        echo "\$this->WidthSizeSurfGrind = $this->WidthSizeSurfGrind<br>";
+        echo "\$this->LengthSizeSurfGrind = $this->LengthSizeSurfGrind<br>";
+
         echo "<br>##################END OF INSTANTIATION IN RG CLASS##########################<br>";
     }
+
+}
+
+Class MACHINES {
+
+    protected $mcid;
+    protected $machineid;
+    protected $name;
+    protected $model;
+    protected $capacity_per_hour; // (data table column is "index_per_hour"
+    protected $operation_process_code;
+
+}
+
+Class MILL_MACHINES extends MACHINES {
 
 }
 
