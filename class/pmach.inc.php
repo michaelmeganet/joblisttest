@@ -126,7 +126,7 @@ Class SURFACE_PROCESSES {
     const THREE_RGA = "2TRGA-1WRGA"; // 2 side accurate thick RG , 1 side accurate width RG
     const FOUR_RGA = "2TRGA-2WRGA"; // 2 side accurate thick RG , 2 side accurate width RG
     const FIVE_RGA = "2TRGA-2WRGA-1LRGA"; // 2 side accurate thick RG , 2 side accurate width RG, 1 side accurate length RG
-    const SIX_RGA = "2RGA-2WRGA-2LRGA"; // 2 side accurate thick RG , 2 side accurate width RG, 2 side accurate length RG
+    const SIX_RGA = "2TRGA-2WRGA-2LRGA"; // 2 side accurate thick RG , 2 side accurate width RG, 2 side accurate length RG
     #PRECISION GRIND SURFACE PROCESS SYMBOL (Surface Grind)
     const ONE_SG = "1TSG"; //1 side thick SG (thickness surfaces SG)
     const TWO_SG = "2TSG"; //2 sides thick SG
@@ -139,7 +139,7 @@ Class SURFACE_PROCESSES {
     const THREE_SGA = "2TSGA-1WSGA"; // 2 side accurate thick SG , 1 side accurate width SG
     const FOUR_SGA = "2TSGA-2WSGA"; // 2 side accurate thick SG , 2 side accurate width SG
     const FIVE_SGA = "2TSGA-2WSGA-1LSGA"; // 2 side accurate thick SG , 2 side accurate width SG, 1 side accurate length SG
-    const SIX_SGA = "2SGA-2WSGA-2LSGA"; // 2 side accurate thick SG , 2 side accurate width SG, 2 side accurate length SG
+    const SIX_SGA = "2TSGA-2WSGA-2LSGA"; // 2 side accurate thick SG , 2 side accurate width SG, 2 side accurate length SG
 
     public function __construct($SurfaceProcess) {
         // instantiate 3 kinds of milling face values TW, WW, LW or TWA, WWA, LWA
