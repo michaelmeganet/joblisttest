@@ -1,6 +1,6 @@
 <?php
 
-Class CUTTINGTPYE {
+Class CUTTINGTYPE {
     #CUT TYPE
 
     const MANUAL_CUT = "MANUAL CUT";

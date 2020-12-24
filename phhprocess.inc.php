@@ -187,6 +187,7 @@ function get_detail_by_jobcode($jobcode) {
     $jobno = (int) substr($jobcode, 17, 2);
     $periodQuono = substr($jobcode, 7, 4);
     $objPeriod = new Period();
+    ## use current period
     $period = $objPeriod->getcurrentPeriod();
     echo "\$branch = $branch , \$co_code = $co_code, \$yearmonth = $yearmonth, \$runningno = $runningno, \$jobno = $jobno<br>";
     echo "\$period = $period<br>";
@@ -345,6 +346,7 @@ Class PROCESS {
         $thisPeriod = $objPeriod->getcurrentPeriod();
         $prevPeriod = $objPeriod->getlastPeriod();
         $sch_detail = get_detail_by_jobcode($jobcode);
+        // get_detial_by_jobcode is grab every possible variables from $jobcode
 //        var_dump($sch_detail);
         echo "<br>";
         if (isset($sch_detail) && $sch_detail != 'empty') {
@@ -421,7 +423,7 @@ Class PROCESS {
 //            $this->cuttingType = $objcutCode ;
             $this->cutCode = $cutCode;
 
-            ####
+            ###########################################################
             ## check if there is a milling process
             $checkMill = checkAnyMillProcess($this->ProcessName); //Assume it is W
             if ($checkMill == "W") {// Milling
@@ -588,17 +590,20 @@ Class CUTPROCESS {
 
         switch ($cuttingType) {
 
-            case CUTTINGTPYE::BANDSAW_CUT:
-                $this->cutCode = CUTTINGTPYE::BANDSAW_CUT_CODE;
+            case CUTTINGTYPE::BANDSAW_CUT:
+                $this->cutCode = CUTTINGTYPE::BANDSAW_CUT_CODE;
+                // DIRECT pointing to the CUTTINGTYPE CLASS without define class object
 
                 break;
-            case CUTTINGTPYE::MANUAL_CUT:
-                $this->cutCode = CUTTINGTPYE::MANUAL_CUT_CODE;
+            case CUTTINGTYPE::MANUAL_CUT:
+                $this->cutCode = CUTTINGTYPE::MANUAL_CUT_CODE;
+                // DIRECT pointing to the CUTTINGTYPE CLASS without define class object
 
 
                 break;
-            case CUTTINGTPYE::CNCFLAME_CUT:
-                $this->cutCode = CUTTINGTPYE::CNCFLAME_CUT_CODE;
+            case CUTTINGTYPE::CNCFLAME_CUT:
+                $this->cutCode = CUTTINGTYPE::CNCFLAME_CUT_CODE;
+                // DIRECT pointing to the CUTTINGTYPE CLASS without define class object
 
 
                 break;
